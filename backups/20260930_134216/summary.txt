@@ -1,0 +1,3 @@
+total_bytes=0
+files_dir=files/
+skipped=1
