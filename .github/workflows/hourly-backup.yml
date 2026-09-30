@@ -2,8 +2,8 @@ name: Hourly Server Backup
 
 on:
   schedule:
-    - cron: "0 * * * *"
-  workflow_dispatch:
+    - cron: "0 * * * *"   # every hour at :00 UTC
+  workflow_dispatch:       # manual run
 
 permissions:
   contents: write
@@ -11,49 +11,53 @@ permissions:
 jobs:
   backup:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Fetch panel files
+      - name: Download server files from panel
         env:
           PTERO_API_KEY: ${{ secrets.PTERO_API_KEY }}
           PTERO_URL: ${{ secrets.PTERO_URL }}
           PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
         run: |
-          set -e
-          if [ -z "$PTERO_API_KEY" ] || [ -z "$PTERO_URL" ] || [ -z "$PTERO_SERVER_ID" ]; then
-            echo "Missing secrets. Add PTERO_API_KEY, PTERO_URL, PTERO_SERVER_ID."
-            exit 1
-          fi
+          set -euo pipefail
+          test -n "$PTERO_API_KEY"
+          test -n "$PTERO_URL"
+          test -n "$PTERO_SERVER_ID"
+
           TS=$(date -u +%Y%m%d_%H%M%S)
-          DIR="backups/$TS"
-          mkdir -p "$DIR/development_behavior_packs/BlazeServerSystems/scripts"
-          mkdir -p "$DIR/development_behavior_packs/BlazeServerSystems/items"
-          mkdir -p "$DIR/worlds"
+          DIR="backups/${TS}"
+          mkdir -p "$DIR/addon/scripts" "$DIR/addon/items" "$DIR/worlds"
 
-          AUTH="Authorization: Bearer $PTERO_API_KEY"
-          BASE="$PTERO_URL/api/client/servers/$PTERO_SERVER_ID"
+          H1="Authorization: Bearer ${PTERO_API_KEY}"
+          H2="Accept: application/json"
+          BASE="${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}"
 
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/resources" > "$DIR/resources.json"
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/server.properties" -o "$DIR/server.properties" || true
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/manifest.json" -o "$DIR/development_behavior_packs/BlazeServerSystems/manifest.json" || true
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/scripts/main.js" -o "$DIR/development_behavior_packs/BlazeServerSystems/scripts/main.js" || true
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/items/phone.json" -o "$DIR/development_behavior_packs/BlazeServerSystems/items/phone.json" || true
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/worlds/Bedrock%20level/level.dat" -o "$DIR/worlds/level.dat" || true
-          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/list?directory=/" > "$DIR/root_listing.json" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/resources" -o "$DIR/resources.json"
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/server.properties" -o "$DIR/server.properties" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/manifest.json" -o "$DIR/addon/manifest.json" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/scripts/main.js" -o "$DIR/addon/scripts/main.js" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/items/phone.json" -o "$DIR/addon/items/phone.json" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/worlds/Bedrock%20level/level.dat" -o "$DIR/worlds/level.dat" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/" -o "$DIR/root_listing.json" || true
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/development_behavior_packs" -o "$DIR/packs_listing.json" || true
 
-          echo "Backup folder: $DIR"
-          ls -laR "$DIR" | head -80
+          echo "Backup at $DIR"
+          find "$DIR" -type f | head -50
+          # keep only last 48 hourly backups
+          if [ -d backups ]; then
+            ls -1d backups/20* 2>/dev/null | sort -r | tail -n +49 | xargs -r rm -rf
+          fi
 
-      - name: Commit backup
+      - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add backups || true
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add backups
           if git diff --staged --quiet; then
-            echo "No changes"
+            echo "Nothing new to commit"
           else
-            git commit -m "chore: hourly backup $(date -u +%Y-%m-%dT%H:%MZ)"
+            git commit -m "backup: $(date -u +%Y-%m-%dT%H:%MZ)"
             git push
           fi
