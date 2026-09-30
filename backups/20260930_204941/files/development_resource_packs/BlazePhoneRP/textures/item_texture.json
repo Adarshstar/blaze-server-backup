@@ -1,0 +1,9 @@
+{
+  "resource_pack_name": "blaze_rp",
+  "texture_name": "atlas.items",
+  "texture_data": {
+    "blaze_phone": {
+      "textures": "textures/items/blaze_phone"
+    }
+  }
+}
