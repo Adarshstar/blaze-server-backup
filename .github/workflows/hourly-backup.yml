@@ -1,0 +1,59 @@
+name: Hourly Server Backup
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch panel files
+        env:
+          PTERO_API_KEY: ${{ secrets.PTERO_API_KEY }}
+          PTERO_URL: ${{ secrets.PTERO_URL }}
+          PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
+        run: |
+          set -e
+          if [ -z "$PTERO_API_KEY" ] || [ -z "$PTERO_URL" ] || [ -z "$PTERO_SERVER_ID" ]; then
+            echo "Missing secrets. Add PTERO_API_KEY, PTERO_URL, PTERO_SERVER_ID."
+            exit 1
+          fi
+          TS=$(date -u +%Y%m%d_%H%M%S)
+          DIR="backups/$TS"
+          mkdir -p "$DIR/development_behavior_packs/BlazeServerSystems/scripts"
+          mkdir -p "$DIR/development_behavior_packs/BlazeServerSystems/items"
+          mkdir -p "$DIR/worlds"
+
+          AUTH="Authorization: Bearer $PTERO_API_KEY"
+          BASE="$PTERO_URL/api/client/servers/$PTERO_SERVER_ID"
+
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/resources" > "$DIR/resources.json"
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/server.properties" -o "$DIR/server.properties" || true
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/manifest.json" -o "$DIR/development_behavior_packs/BlazeServerSystems/manifest.json" || true
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/scripts/main.js" -o "$DIR/development_behavior_packs/BlazeServerSystems/scripts/main.js" || true
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/items/phone.json" -o "$DIR/development_behavior_packs/BlazeServerSystems/items/phone.json" || true
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/contents?file=/worlds/Bedrock%20level/level.dat" -o "$DIR/worlds/level.dat" || true
+          curl -s -H "$AUTH" -H "Accept: application/json" "$BASE/files/list?directory=/" > "$DIR/root_listing.json" || true
+
+          echo "Backup folder: $DIR"
+          ls -laR "$DIR" | head -80
+
+      - name: Commit backup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backups || true
+          if git diff --staged --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore: hourly backup $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          fi
