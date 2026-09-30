@@ -1,0 +1,41 @@
+{
+  "format_version": "1.10.0",
+  "animations": {
+    "animation.blaze.phone_use": {
+      "animation_length": 0.35,
+      "loop": false,
+      "bones": {
+        "rightitem": {
+          "rotation": {
+            "0.0": [0, 0, 0],
+            "0.1": [-25, 0, 15],
+            "0.25": [-15, 5, 8],
+            "0.35": [0, 0, 0]
+          },
+          "position": {
+            "0.0": [0, 0, 0],
+            "0.1": [0, 1.5, -1],
+            "0.35": [0, 0, 0]
+          }
+        }
+      }
+    },
+    "animation.blaze.phone_cutoff": {
+      "animation_length": 0.2,
+      "loop": false,
+      "bones": {
+        "rightitem": {
+          "rotation": {
+            "0.0": [-15, 5, 8],
+            "0.2": [0, 0, 0]
+          },
+          "scale": {
+            "0.0": [1, 1, 1],
+            "0.15": [0.85, 0.85, 0.85],
+            "0.2": [1, 1, 1]
+          }
+        }
+      }
+    }
+  }
+}

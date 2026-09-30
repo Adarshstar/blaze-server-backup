@@ -1,0 +1,12 @@
+[
+  {
+    "name": "textures",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "manifest.json",
+    "is_file": true,
+    "size": 402
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "resource_data": {
+    "texture_data": {
+      "blaze_phone": {
+        "textures": "textures/items/blaze_phone"
+      }
+    }
+  }
+}

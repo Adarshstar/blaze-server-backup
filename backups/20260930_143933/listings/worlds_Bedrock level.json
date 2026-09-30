@@ -1,0 +1,32 @@
+[
+  {
+    "name": "db",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "level.dat",
+    "is_file": true,
+    "size": 3092
+  },
+  {
+    "name": "level.dat_old",
+    "is_file": true,
+    "size": 3092
+  },
+  {
+    "name": "levelname.txt",
+    "is_file": true,
+    "size": 13
+  },
+  {
+    "name": "world_behavior_packs.json",
+    "is_file": true,
+    "size": 92
+  },
+  {
+    "name": "world_resource_packs.json",
+    "is_file": true,
+    "size": 92
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "animation_controllers",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "animations",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "items",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "scripts",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "manifest.json",
+    "is_file": true,
+    "size": 779
+  }
+]

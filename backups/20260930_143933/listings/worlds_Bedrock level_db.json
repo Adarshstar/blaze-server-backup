@@ -1,0 +1,47 @@
+[
+  {
+    "name": "000095.ldb",
+    "is_file": true,
+    "size": 52211
+  },
+  {
+    "name": "000099.ldb",
+    "is_file": true,
+    "size": 16527
+  },
+  {
+    "name": "000103.ldb",
+    "is_file": true,
+    "size": 84181
+  },
+  {
+    "name": "000119.ldb",
+    "is_file": true,
+    "size": 18724
+  },
+  {
+    "name": "000146.log",
+    "is_file": true,
+    "size": 731081
+  },
+  {
+    "name": "000147.ldb",
+    "is_file": true,
+    "size": 2131511
+  },
+  {
+    "name": "000148.ldb",
+    "is_file": true,
+    "size": 209422
+  },
+  {
+    "name": "CURRENT",
+    "is_file": true,
+    "size": 16
+  },
+  {
+    "name": "MANIFEST-000144",
+    "is_file": true,
+    "size": 566
+  }
+]
