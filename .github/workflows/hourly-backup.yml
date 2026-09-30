@@ -1,182 +1,242 @@
 name: Hourly Server Backup
 
+# Self-sustaining loop: run 6 hourly backups, then re-trigger itself.
+# Does NOT depend on GitHub schedule cron.
 on:
-  schedule:
-    - cron: "0 * * * *"
-    - cron: "30 * * * *"
   workflow_dispatch:
+  repository_dispatch:
+    types: [backup-loop]
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
-  group: server-backup
+  group: server-backup-loop
   cancel-in-progress: false
 
 jobs:
-  backup:
+  backup-loop:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 390
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Full recursive panel backup
+      - name: Install gh CLI
+        run: |
+          (command -v gh >/dev/null) || {
+            curl -sL https://github.com/cli/cli/releases/download/v2.67.0/gh_2.67.0_linux_amd64.tar.gz | tar xz
+            sudo cp gh_2.67.0_linux_amd64/bin/gh /usr/local/bin/gh
+          }
+          gh --version
+
+      - name: Run 6 hourly backups then self-retrigger
         env:
           PTERO_API_KEY: ${{ secrets.PTERO_API_KEY }}
           PTERO_URL: ${{ secrets.PTERO_URL }}
           PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           test -n "${PTERO_API_KEY:-}"
           test -n "${PTERO_URL:-}"
           test -n "${PTERO_SERVER_ID:-}"
 
-          TS=$(date -u +%Y%m%d_%H%M%S)
-          ROOT="backups/${TS}"
-          mkdir -p "$ROOT"
-          H1="Authorization: Bearer ${PTERO_API_KEY}"
-          H2="Accept: application/json"
-          BASE="${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Max single file size to download (bytes) — skip huge binary chunks
-          MAX_FILE=5242880   # 5 MB per file
-          MAX_TOTAL=104857600 # 100 MB total soft cap
+          do_backup() {
+            local TS ROOT H1 H2 BASE
+            TS=$(date -u +%Y%m%d_%H%M%S)
+            ROOT="backups/${TS}"; export ROOT
+            mkdir -p "$ROOT"
+            H1="Authorization: Bearer ${PTERO_API_KEY}"
+            H2="Accept: application/json"
+            BASE="${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}"
 
-          curl -fsS -H "$H1" -H "$H2" "$BASE/resources" -o "$ROOT/resources.json"
+            echo "==== BACKUP $TS ===="
+            curl -fsS -H "$H1" -H "$H2" "$BASE/resources" -o "$ROOT/resources.json" || true
 
-          python3 << 'PY'
-          import os, json, urllib.request, pathlib, sys
+            # Priority file list (always try)
+            FILES=(
+              "/server.properties"
+              "/allowlist.json"
+              "/permissions.json"
+              "/packetlimitconfig.json"
+              "/packet-statistics.txt"
+              "/Dedicated_Server.txt"
+              "/profanity_filter.wlist"
+              "/development_behavior_packs/BlazeServerSystems/manifest.json"
+              "/development_behavior_packs/BlazeServerSystems/scripts/main.js"
+              "/development_behavior_packs/BlazeServerSystems/items/phone.json"
+              "/development_behavior_packs/BlazeServerSystems/animations/phone.animation.json"
+              "/development_resource_packs/BlazePhoneRP/manifest.json"
+              "/development_resource_packs/BlazePhoneRP/textures/item_texture.json"
+              "/development_resource_packs/BlazePhoneRP/textures/items/blaze_phone.png"
+              "/worlds/Bedrock level/level.dat"
+              "/worlds/Bedrock level/level.dat_old"
+              "/worlds/Bedrock level/levelname.txt"
+              "/worlds/Bedrock level/world_behavior_packs.json"
+              "/worlds/Bedrock level/world_resource_packs.json"
+            )
 
-          api_key = os.environ["PTERO_API_KEY"]
-          base = os.environ["PTERO_URL"].rstrip("/") + "/api/client/servers/" + os.environ["PTERO_SERVER_ID"]
-          root = os.environ.get("BACKUP_ROOT") or None
-          PY
+            mkdir -p "$ROOT/files"
+            for f in "${FILES[@]}"; do
+              rel="${f#/}"
+              dest="$ROOT/files/$rel"
+              mkdir -p "$(dirname "$dest")"
+              # URL-encode path
+              enc=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$f'''))")
+              if curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=$enc" -o "$dest"; then
+                echo "OK $f ($(wc -c < "$dest") bytes)"
+              else
+                echo "MISS $f"
+                rm -f "$dest"
+              fi
+            done
 
-          export BACKUP_ROOT="$ROOT"
-          python3 << PY
+            # Recursive list + download small files from key dirs
+            python3 << 'PY'
           import os, json, urllib.parse, urllib.request, pathlib
-
           API_KEY = os.environ["PTERO_API_KEY"]
           BASE = os.environ["PTERO_URL"].rstrip("/") + "/api/client/servers/" + os.environ["PTERO_SERVER_ID"]
-          OUT = pathlib.Path(os.environ["BACKUP_ROOT"])
-          MAX_FILE = 5 * 1024 * 1024
-          MAX_TOTAL = 120 * 1024 * 1024
-          total = 0
+          OUT = pathlib.Path(os.environ["ROOT"])
+          MAX_FILE = 8 * 1024 * 1024
+          total = [0]
           skipped = []
 
-          def req(url):
-              r = urllib.request.Request(url, headers={
-                  "Authorization": f"Bearer {API_KEY}",
-                  "Accept": "application/json",
-              })
-              with urllib.request.urlopen(r, timeout=120) as res:
-                  return res.read()
+          def api(url):
+              req = urllib.request.Request(url, headers={"Authorization": f"Bearer {API_KEY}", "Accept": "application/json", "User-Agent": "BlazeBackup/1.0"})
+              with urllib.request.urlopen(req, timeout=120) as r:
+                  return r.read()
 
-          def list_dir(directory):
-              q = urllib.parse.quote(directory if directory.startswith("/") else "/" + directory)
-              url = f"{BASE}/files/list?directory={q}"
-              data = json.loads(req(url).decode())
-              return data.get("data", [])
+          def list_dir(d):
+              q = urllib.parse.quote(d, safe="")
+              return json.loads(api(f"{BASE}/files/list?directory={q}")).get("data", [])
 
-          def download_file(path, dest: pathlib.Path):
-              global total
-              q = urllib.parse.quote(path)
-              url = f"{BASE}/files/contents?file={q}"
+          def download(path, dest):
+              q = urllib.parse.quote(path, safe="")
               try:
-                  data = req(url)
+                  data = api(f"{BASE}/files/contents?file={q}")
               except Exception as e:
                   skipped.append(f"{path}: {e}")
                   return
               if len(data) > MAX_FILE:
-                  skipped.append(f"{path}: too large ({len(data)} bytes)")
+                  skipped.append(f"{path}: size {len(data)}")
                   dest.parent.mkdir(parents=True, exist_ok=True)
-                  dest.with_suffix(dest.suffix + ".skipped.txt").write_text(
-                      f"Skipped {path} size={len(data)}\n"
-                  )
-                  return
-              if total + len(data) > MAX_TOTAL:
-                  skipped.append(f"{path}: total budget exceeded")
+                  dest.with_suffix(dest.suffix + ".skipped.txt").write_text(f"size={len(data)}\n")
                   return
               dest.parent.mkdir(parents=True, exist_ok=True)
               dest.write_bytes(data)
-              total += len(data)
-              print(f"OK {len(data):8d}  {path}")
+              total[0] += len(data)
+              print(f"OK {len(data):8d} {path}")
 
-          # Always include these roots
-          roots = ["/", "/development_behavior_packs", "/development_resource_packs",
-                   "/resource_packs", "/behavior_packs", "/worlds", "/worlds/Bedrock level"]
-
-          seen_dirs = set()
-          queue = ["/"]
-
-          while queue:
-              d = queue.pop(0)
-              if d in seen_dirs:
+          roots = [
+              "/",
+              "/development_behavior_packs",
+              "/development_behavior_packs/BlazeServerSystems",
+              "/development_behavior_packs/BlazeServerSystems/scripts",
+              "/development_behavior_packs/BlazeServerSystems/items",
+              "/development_behavior_packs/BlazeServerSystems/animations",
+              "/development_resource_packs",
+              "/development_resource_packs/BlazePhoneRP",
+              "/development_resource_packs/BlazePhoneRP/textures",
+              "/development_resource_packs/BlazePhoneRP/textures/items",
+              "/worlds",
+              "/worlds/Bedrock level",
+              "/worlds/Bedrock level/db",
+              "/config",
+              "/minecraftpe",
+          ]
+          seen = set()
+          for d in roots:
+              if d in seen:
                   continue
-              seen_dirs.add(d)
+              seen.add(d)
               try:
                   entries = list_dir(d)
               except Exception as e:
                   skipped.append(f"list {d}: {e}")
                   continue
-              # save listing
-              list_path = OUT / "listings" / (d.strip("/").replace("/", "_") or "root")
-              list_path = list_path.with_suffix(".json")
-              list_path.parent.mkdir(parents=True, exist_ok=True)
-              list_path.write_text(json.dumps(entries, indent=2)[:500000])
-
-              for ent in entries:
-                  attr = ent.get("attributes", {})
-                  name = attr.get("name", "")
-                  is_file = attr.get("is_file", False)
-                  size = attr.get("size", 0) or 0
+              list_out = OUT / "listings" / (d.strip("/").replace("/", "_") or "root")
+              list_out = list_out.with_suffix(".json")
+              list_out.parent.mkdir(parents=True, exist_ok=True)
+              list_out.write_text(json.dumps([{k: e.get("attributes", {}) for k in ("attributes",)} for e in entries], indent=2)[:400000])
+              # simpler listing
+              simple = []
+              for e in entries:
+                  a = e.get("attributes", {})
+                  simple.append({"name": a.get("name"), "is_file": a.get("is_file"), "size": a.get("size")})
+              list_out.write_text(json.dumps(simple, indent=2))
+              for e in entries:
+                  a = e.get("attributes", {})
+                  name = a.get("name", "")
+                  is_file = a.get("is_file", False)
+                  size = a.get("size") or 0
                   path = (d.rstrip("/") + "/" + name) if d != "/" else "/" + name
-                  # skip noisy huge runtime
-                  if name in (".git", "node_modules", "cache", "tmp"):
+                  if name in ("behavior_packs", "resource_packs", "definitions", "treatments", "world_templates", "premium_cache"):
+                      continue
+                  if name == "bedrock_server":
+                      skipped.append(f"{path}: binary skipped")
                       continue
                   if not is_file:
-                      # limit depth into world db
-                      if "/db" in path and path.count("/") > 4:
-                          continue
-                      queue.append(path)
+                      if path not in seen and path.count("/") <= 5:
+                          roots.append(path)
                       continue
-                  # skip very large ldb files but note them
-                  if size > MAX_FILE or name.endswith(".ldb") and size > 500000:
-                      skipped.append(f"{path}: size {size}")
-                      note = OUT / "skipped_large"
-                      note.mkdir(parents=True, exist_ok=True)
-                      (note / name.replace("/", "_")).write_text(f"{path}\nsize={size}\n")
+                  if size > MAX_FILE:
+                      skipped.append(f"{path}: {size}")
                       continue
-                  rel = path.lstrip("/")
-                  download_file(path, OUT / "files" / rel)
+                  # skip huge ldb but keep small ones + CURRENT/MANIFEST/logs under 8MB
+                  download(path, OUT / "files" / path.lstrip("/"))
 
           (OUT / "skipped.json").write_text(json.dumps(skipped, indent=2))
-          (OUT / "summary.txt").write_text(f"total_bytes={total}\nfiles_dir=files/\nskipped={len(skipped)}\n")
-          print(f"DONE total={total} skipped={len(skipped)}")
+          (OUT / "summary.txt").write_text(f"bytes={total[0]} skipped={len(skipped)}\n")
+          print(f"DONE bytes={total[0]} skipped={len(skipped)}")
           PY
 
-          echo "Backup tree:"
-          du -sh "$ROOT" || true
-          find "$ROOT" -type f | wc -l
+            # commit this hour
+            git add -A backups || true
+            if ! git diff --staged --quiet; then
+              git commit -m "backup: ${TS}" || true
+              for i in 1 2 3 4 5; do
+                git pull --rebase origin master && git push origin HEAD:master && break
+                sleep 4
+                git pull --rebase origin master || true
+              done
+            else
+              echo "No file changes this hour"
+            fi
 
-          # retention: keep last 24 backup folders
-          ls -1d backups/20* 2>/dev/null | sort -r | tail -n +25 | xargs -r rm -rf || true
+            # retention 36 folders
+            ls -1d backups/20* 2>/dev/null | sort -r | tail -n +37 | xargs -r rm -rf || true
+          }
 
-      - name: Commit and push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A backups
-          if git diff --staged --quiet; then
-            echo "No changes"
-            exit 0
-          fi
-          git commit -m "backup full: $(date -u +%Y-%m-%dT%H:%MZ)"
-          for i in 1 2 3 4; do
-            git pull --rebase origin master && git push origin HEAD:master && exit 0
-            sleep 5
-            git pull --rebase origin master || true
+          # 6 cycles: backup now, then wait 1h x5 more
+          for cycle in 1 2 3 4 5 6; do
+            echo "======== CYCLE $cycle / 6 @ $(date -u -Iseconds) ========"
+            export ROOT="backups/$(date -u +%Y%m%d_%H%M%S)"
+            # do_backup sets its own ROOT internally
+            do_backup
+            if [ "$cycle" -lt 6 ]; then
+              echo "Sleeping 3600s until next hourly backup..."
+              sleep 3600
+              git pull --rebase origin master || true
+            fi
           done
-          exit 1
+
+          echo "6-hour window complete. Re-triggering workflow..."
+          # Prefer PAT if set as GH_PAT; else GITHUB_TOKEN
+          export GH_TOKEN="${GH_TOKEN}"
+          if gh workflow run "Hourly Server Backup" --repo "${GITHUB_REPOSITORY}"; then
+            echo "Successfully re-triggered next 6h loop"
+          else
+            echo "gh workflow run failed — trying repository_dispatch"
+            curl -fsS -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/dispatches" \
+              -d '{"event_type":"backup-loop"}' || echo "dispatch also failed"
+          fi
