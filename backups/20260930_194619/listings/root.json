@@ -1,0 +1,137 @@
+[
+  {
+    "name": "behavior_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "config",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "data",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "definitions",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_behavior_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_resource_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_skin_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "minecraftpe",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "premium_cache",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "resource_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "treatments",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "world_templates",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "worlds",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "ContentLog2026-09-30_15-54-59_1.txt",
+    "is_file": true,
+    "size": 480
+  },
+  {
+    "name": "ContentLog2026-09-30_16-06-11_1.txt",
+    "is_file": true,
+    "size": 480
+  },
+  {
+    "name": "ContentLog2026-09-30_16-19-01_1.txt",
+    "is_file": true,
+    "size": 525
+  },
+  {
+    "name": "ContentLog2026-09-30_16-26-37_1.txt",
+    "is_file": true,
+    "size": 525
+  },
+  {
+    "name": "ContentLog2026-09-30_16-51-57_1.txt",
+    "is_file": true,
+    "size": 447
+  },
+  {
+    "name": "ContentLog2026-09-30_16-59-15_1.txt",
+    "is_file": true,
+    "size": 0
+  },
+  {
+    "name": "Dedicated_Server.txt",
+    "is_file": true,
+    "size": 0
+  },
+  {
+    "name": "allowlist.json",
+    "is_file": true,
+    "size": 3
+  },
+  {
+    "name": "bedrock_server",
+    "is_file": true,
+    "size": 256133808
+  },
+  {
+    "name": "packet-statistics.txt",
+    "is_file": true,
+    "size": 252
+  },
+  {
+    "name": "packetlimitconfig.json",
+    "is_file": true,
+    "size": 905
+  },
+  {
+    "name": "permissions.json",
+    "is_file": true,
+    "size": 3
+  },
+  {
+    "name": "profanity_filter.wlist",
+    "is_file": true,
+    "size": 8548
+  },
+  {
+    "name": "server.properties",
+    "is_file": true,
+    "size": 838
+  }
+]

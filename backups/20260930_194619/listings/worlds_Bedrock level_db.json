@@ -1,0 +1,32 @@
+[
+  {
+    "name": "000039.ldb",
+    "is_file": true,
+    "size": 1144384
+  },
+  {
+    "name": "000041.ldb",
+    "is_file": true,
+    "size": 96443
+  },
+  {
+    "name": "000044.ldb",
+    "is_file": true,
+    "size": 2249
+  },
+  {
+    "name": "000045.log",
+    "is_file": true,
+    "size": 64
+  },
+  {
+    "name": "CURRENT",
+    "is_file": true,
+    "size": 16
+  },
+  {
+    "name": "MANIFEST-000043",
+    "is_file": true,
+    "size": 248
+  }
+]

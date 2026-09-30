@@ -1,0 +1,18 @@
+{
+  "profile": {
+    "default_verbosity": "default",
+
+    "category_verbosity": {
+
+      "Example1": "default",
+      "Example2": "none",
+      "Example3": "retail",
+      "Example4": "retailplus",
+      "Example5": "dev",
+      "Example6": "verbose",
+      "Example7": "trace",
+
+      "Main Loop": "default"
+    }
+  }
+}
