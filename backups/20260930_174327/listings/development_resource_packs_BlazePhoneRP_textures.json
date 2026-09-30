@@ -1,0 +1,12 @@
+[
+  {
+    "name": "items",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "item_texture.json",
+    "is_file": true,
+    "size": 171
+  }
+]
