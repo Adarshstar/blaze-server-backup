@@ -1,0 +1,27 @@
+[
+  {
+    "name": "000191.log",
+    "is_file": true,
+    "size": 3850284
+  },
+  {
+    "name": "000193.ldb",
+    "is_file": true,
+    "size": 2132020
+  },
+  {
+    "name": "000194.ldb",
+    "is_file": true,
+    "size": 600918
+  },
+  {
+    "name": "CURRENT",
+    "is_file": true,
+    "size": 16
+  },
+  {
+    "name": "MANIFEST-000162",
+    "is_file": true,
+    "size": 2292
+  }
+]

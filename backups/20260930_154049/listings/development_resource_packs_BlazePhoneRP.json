@@ -1,0 +1,22 @@
+[
+  {
+    "name": "texts",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "textures",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "manifest.json",
+    "is_file": true,
+    "size": 351
+  },
+  {
+    "name": "pack_icon.png",
+    "is_file": true,
+    "size": 224
+  }
+]

@@ -1,0 +1,107 @@
+[
+  {
+    "name": "behavior_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "config",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "data",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "definitions",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_behavior_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_resource_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "development_skin_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "minecraftpe",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "premium_cache",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "resource_packs",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "treatments",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "world_templates",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "worlds",
+    "is_file": false,
+    "size": 4096
+  },
+  {
+    "name": "Dedicated_Server.txt",
+    "is_file": true,
+    "size": 0
+  },
+  {
+    "name": "allowlist.json",
+    "is_file": true,
+    "size": 3
+  },
+  {
+    "name": "bedrock_server",
+    "is_file": true,
+    "size": 256133808
+  },
+  {
+    "name": "packet-statistics.txt",
+    "is_file": true,
+    "size": 6346
+  },
+  {
+    "name": "packetlimitconfig.json",
+    "is_file": true,
+    "size": 905
+  },
+  {
+    "name": "permissions.json",
+    "is_file": true,
+    "size": 3
+  },
+  {
+    "name": "profanity_filter.wlist",
+    "is_file": true,
+    "size": 8548
+  },
+  {
+    "name": "server.properties",
+    "is_file": true,
+    "size": 1035
+  }
+]
