@@ -2,8 +2,8 @@ name: Hourly Server Backup
 
 on:
   schedule:
-    - cron: "0 * * * *"   # every hour at :00 UTC
-  workflow_dispatch:       # manual run
+    - cron: "0 * * * *"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -22,18 +22,13 @@ jobs:
           PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
         run: |
           set -euo pipefail
-          test -n "$PTERO_API_KEY"
-          test -n "$PTERO_URL"
-          test -n "$PTERO_SERVER_ID"
-
+          test -n "$PTERO_API_KEY" && test -n "$PTERO_URL" && test -n "$PTERO_SERVER_ID"
           TS=$(date -u +%Y%m%d_%H%M%S)
           DIR="backups/${TS}"
           mkdir -p "$DIR/addon/scripts" "$DIR/addon/items" "$DIR/worlds"
-
           H1="Authorization: Bearer ${PTERO_API_KEY}"
           H2="Accept: application/json"
           BASE="${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}"
-
           curl -fsS -H "$H1" -H "$H2" "$BASE/resources" -o "$DIR/resources.json"
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/server.properties" -o "$DIR/server.properties" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/manifest.json" -o "$DIR/addon/manifest.json" || true
@@ -41,23 +36,18 @@ jobs:
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/items/phone.json" -o "$DIR/addon/items/phone.json" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/worlds/Bedrock%20level/level.dat" -o "$DIR/worlds/level.dat" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/" -o "$DIR/root_listing.json" || true
-          curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/development_behavior_packs" -o "$DIR/packs_listing.json" || true
+          ls -laR "$DIR" | head -40
+          ls -1d backups/20* 2>/dev/null | sort -r | tail -n +49 | xargs -r rm -rf || true
 
-          echo "Backup at $DIR"
-          find "$DIR" -type f | head -50
-          # keep only last 48 hourly backups
-          if [ -d backups ]; then
-            ls -1d backups/20* 2>/dev/null | sort -r | tail -n +49 | xargs -r rm -rf
-          fi
-
-      - name: Commit & push
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add backups
           if git diff --staged --quiet; then
-            echo "Nothing new to commit"
-          else
-            git commit -m "backup: $(date -u +%Y-%m-%dT%H:%MZ)"
-            git push
+            echo "No changes"
+            exit 0
           fi
+          git commit -m "backup: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase origin master || git pull --rebase origin main || true
+          git push origin HEAD:master || git push origin HEAD:main
