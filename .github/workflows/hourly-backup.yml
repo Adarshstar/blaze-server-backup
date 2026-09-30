@@ -1,12 +1,18 @@
 name: Hourly Server Backup
 
+# GitHub schedule can delay up to ~15-30 min; dual cron improves reliability
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *"      # every hour at :00 UTC
+    - cron: "30 * * * *"     # every hour at :30 UTC (backup trigger)
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: server-backup
+  cancel-in-progress: false
 
 jobs:
   backup:
@@ -14,6 +20,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Download server files from panel
         env:
@@ -22,13 +31,19 @@ jobs:
           PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
         run: |
           set -euo pipefail
-          test -n "$PTERO_API_KEY" && test -n "$PTERO_URL" && test -n "$PTERO_SERVER_ID"
+          echo "Starting backup at $(date -u -Iseconds)"
+          test -n "${PTERO_API_KEY:-}" || { echo "Missing PTERO_API_KEY"; exit 1; }
+          test -n "${PTERO_URL:-}" || { echo "Missing PTERO_URL"; exit 1; }
+          test -n "${PTERO_SERVER_ID:-}" || { echo "Missing PTERO_SERVER_ID"; exit 1; }
+
           TS=$(date -u +%Y%m%d_%H%M%S)
           DIR="backups/${TS}"
           mkdir -p "$DIR/addon/scripts" "$DIR/addon/items" "$DIR/worlds"
+
           H1="Authorization: Bearer ${PTERO_API_KEY}"
           H2="Accept: application/json"
           BASE="${PTERO_URL}/api/client/servers/${PTERO_SERVER_ID}"
+
           curl -fsS -H "$H1" -H "$H2" "$BASE/resources" -o "$DIR/resources.json"
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/server.properties" -o "$DIR/server.properties" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/manifest.json" -o "$DIR/addon/manifest.json" || true
@@ -36,18 +51,26 @@ jobs:
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/development_behavior_packs/BlazeServerSystems/items/phone.json" -o "$DIR/addon/items/phone.json" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/contents?file=/worlds/Bedrock%20level/level.dat" -o "$DIR/worlds/level.dat" || true
           curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/" -o "$DIR/root_listing.json" || true
-          ls -laR "$DIR" | head -40
+          curl -fsS -H "$H1" -H "$H2" "$BASE/files/list?directory=/worlds/Bedrock%20level/db" -o "$DIR/db_listing.json" || true
+
+          echo "Backup contents:"
+          find "$DIR" -type f -printf "%s %p\n"
+          # keep last 48 backup folders
           ls -1d backups/20* 2>/dev/null | sort -r | tail -n +49 | xargs -r rm -rf || true
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add backups
+          git add -A backups
           if git diff --staged --quiet; then
-            echo "No changes"
+            echo "No file changes to commit"
             exit 0
           fi
           git commit -m "backup: $(date -u +%Y-%m-%dT%H:%MZ)"
-          git pull --rebase origin master || git pull --rebase origin main || true
-          git push origin HEAD:master || git push origin HEAD:main
+          for i in 1 2 3; do
+            git pull --rebase origin master && git push origin HEAD:master && break
+            echo "Retry push $i..."
+            sleep 3
+            git pull --rebase origin master || true
+          done
