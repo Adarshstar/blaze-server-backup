@@ -1,0 +1,60 @@
+Dedicated_Server.txt
+[2026-10-01 01:45:45:282 INFO] Starting Server
+[2026-10-01 01:45:45:282 INFO] Version: 1.26.52.3
+[2026-10-01 01:45:45:282 INFO] Session ID: 5fe1fb80-cb07-4eba-a036-28f1e516528b
+[2026-10-01 01:45:45:282 INFO] Build ID: 51798919
+[2026-10-01 01:45:45:282 INFO] Branch: r/26_u5
+[2026-10-01 01:45:45:282 INFO] Commit ID: 54116bb5ee0b7aee0b5591efbcc8bc3cf64f168a
+[2026-10-01 01:45:45:282 INFO] Configuration: Publish
+[2026-10-01 01:45:45:282 INFO] Contents of server.properties: {}
+[2026-10-01 01:45:45:282 INFO] Level Name: Bedrock level
+[2026-10-01 01:45:45:282 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-10-01 01:45:45:374 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-10-01 01:45:45:374 INFO] Game mode: 0 Survival
+[2026-10-01 01:45:45:374 INFO] Difficulty: 2 NORMAL
+[2026-10-01 01:45:45:383 INFO] Content logging to console is enabled.
+[2026-10-01 01:45:45:388 INFO] 
+
+#####################################################
+#                                                   #
+#               LOADING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-10-01 01:45:46:646 INFO] Content logging to disk is enabled. Writing log to: ContentLog2026-10-01_01-45-46
+[2026-10-01 01:45:46:649 INFO] Opening level 'worlds/Bedrock level/db'
+[2026-10-01 01:45:46:768 INFO] Pack Stack - [00] Blaze Server Systems (id: a1b2c3d4-e5f6-7890-abcd-ef1234567890, version: 2.6.0) @ development_behavior_packs/BlazeServerSystems
+[2026-10-01 01:45:46:910 WARN] [Scripting] [Blaze] OK playerSpawn
+
+[2026-10-01 01:45:46:910 WARN] [Scripting] [Blaze] SKIP chatSend
+
+[2026-10-01 01:45:46:910 WARN] [Scripting] [Blaze] OK itemUse
+
+[2026-10-01 01:45:46:910 WARN] [Scripting] [Blaze] OK entityDie
+
+[2026-10-01 01:45:46:911 WARN] [Scripting] [Blaze] OK playerBreakBlock
+
+[2026-10-01 01:45:46:911 WARN] [Scripting] [Blaze] OK playerBreakBlock
+
+[2026-10-01 01:45:46:911 WARN] [Scripting] [Blaze] SKIP playerPlaceBlock
+
+[2026-10-01 01:45:50:813 INFO] Signed in to signaling service successfully
+[2026-10-01 01:45:51:381 INFO] IPv4 supported, port: 2519: Used for gameplay
+[2026-10-01 01:45:51:381 INFO] IPv6 supported, port: 19133: Used for gameplay
+[2026-10-01 01:45:51:525 INFO] Server started.
+[2026-10-01 01:45:51:525 ERROR] ================ TRANSPORT TYPE ERROR  ===================
+[2026-10-01 01:45:51:525 ERROR] Your current connection type is not set to NetherNet. In this release, NetherNet is the only supported transport type.
+[2026-10-01 01:45:51:525 ERROR] Players will not be able to connect to your game without NetherNet.
+[2026-10-01 01:45:51:525 ERROR] 
+[2026-10-01 01:45:51:525 ERROR] To switch, set 'transport=nethernet' in server.properties.
+[2026-10-01 01:45:51:525 ERROR] 
+[2026-10-01 01:45:51:525 ERROR] For more information, please reference the included bedrock_server_how_to.html file.
+[2026-10-01 01:45:51:525 ERROR] =======================================================
+[2026-10-01 01:45:51:525 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-10-01 01:45:51:525 INFO] Server Telemetry is currently not enabled. 
+[2026-10-01 01:45:51:525 INFO] Enabling this telemetry helps us improve the game.
+[2026-10-01 01:45:51:526 INFO] 
+[2026-10-01 01:45:51:526 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-10-01 01:45:51:526 INFO] to the server.properties file in the handheld/src-server directory
+[2026-10-01 01:45:51:526 INFO] ======================================================
+[2026-10-01 01:45:51:892 INFO] Server stop requested.
+[2026-10-01 01:45:51:928 INFO] Stopping server...
