@@ -1,0 +1,69 @@
+Dedicated_Server.txt
+[2026-10-01 02:03:37:582 INFO] Starting Server
+[2026-10-01 02:03:37:582 INFO] Version: 1.26.52.3
+[2026-10-01 02:03:37:582 INFO] Session ID: 1fbbaceb-a8f2-4418-9d2c-54cc6a2fd886
+[2026-10-01 02:03:37:583 INFO] Build ID: 51798919
+[2026-10-01 02:03:37:583 INFO] Branch: r/26_u5
+[2026-10-01 02:03:37:583 INFO] Commit ID: 54116bb5ee0b7aee0b5591efbcc8bc3cf64f168a
+[2026-10-01 02:03:37:583 INFO] Configuration: Publish
+[2026-10-01 02:03:37:583 INFO] Contents of server.properties: {}
+[2026-10-01 02:03:37:583 INFO] Level Name: Bedrock level
+[2026-10-01 02:03:37:583 INFO] Profiler config ('bootstrap.json') load result: success=1, errorMessage=(null)
+[2026-10-01 02:03:37:674 INFO] No CDN config file found at: cdn_config.json for dedicated server
+[2026-10-01 02:03:37:674 INFO] Game mode: 0 Survival
+[2026-10-01 02:03:37:674 INFO] Difficulty: 2 NORMAL
+[2026-10-01 02:03:37:683 INFO] Content logging to console is enabled.
+[2026-10-01 02:03:37:692 INFO] 
+
+#####################################################
+#                                                   #
+#               LOADING VANILLA WORLD               #
+#                                                   #
+#####################################################
+[2026-10-01 02:03:39:043 INFO] Content logging to disk is enabled. Writing log to: ContentLog2026-10-01_02-03-39
+[2026-10-01 02:03:39:053 INFO] Opening level 'worlds/Bedrock level/db'
+[2026-10-01 02:03:39:223 INFO] Pack Stack - [00] Blaze Server Systems (id: a1b2c3d4-e5f6-7890-abcd-ef1234567890, version: 2.6.0) @ development_behavior_packs/BlazeServerSystems
+[2026-10-01 02:03:39:432 WARN] [Scripting] [Blaze] OK playerSpawn
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] SKIP chatSend
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] OK itemUse
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] OK entityDie
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] OK playerBreakBlock
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] OK playerBreakBlock
+
+[2026-10-01 02:03:39:433 WARN] [Scripting] [Blaze] SKIP playerPlaceBlock
+
+[2026-10-01 02:03:43:663 INFO] Signed in to signaling service successfully
+[2026-10-01 02:03:44:317 INFO] IPv4 supported, port: 2519: Used for gameplay
+[2026-10-01 02:03:44:317 INFO] IPv6 supported, port: 19133: Used for gameplay
+[2026-10-01 02:03:44:497 INFO] Server started.
+[2026-10-01 02:03:44:497 ERROR] ================ TRANSPORT TYPE ERROR  ===================
+[2026-10-01 02:03:44:497 ERROR] Your current connection type is not set to NetherNet. In this release, NetherNet is the only supported transport type.
+[2026-10-01 02:03:44:497 ERROR] Players will not be able to connect to your game without NetherNet.
+[2026-10-01 02:03:44:497 ERROR] 
+[2026-10-01 02:03:44:497 ERROR] To switch, set 'transport=nethernet' in server.properties.
+[2026-10-01 02:03:44:497 ERROR] 
+[2026-10-01 02:03:44:497 ERROR] For more information, please reference the included bedrock_server_how_to.html file.
+[2026-10-01 02:03:44:497 ERROR] =======================================================
+[2026-10-01 02:03:44:497 INFO] ================ TELEMETRY MESSAGE ===================
+[2026-10-01 02:03:44:497 INFO] Server Telemetry is currently not enabled. 
+[2026-10-01 02:03:44:497 INFO] Enabling this telemetry helps us improve the game.
+[2026-10-01 02:03:44:497 INFO] 
+[2026-10-01 02:03:44:497 INFO] To enable this feature, add the line 'emit-server-telemetry=true'
+[2026-10-01 02:03:44:497 INFO] to the server.properties file in the handheld/src-server directory
+[2026-10-01 02:03:44:497 INFO] ======================================================
+[2026-10-01 02:03:46:471 WARN] [Scripting] [Blaze] init InternalError: stack overflow
+
+[2026-10-01 02:03:46:472 ERROR] [Scripting] [Watchdog] Stack overflow detected in 'Blaze Server Systems'
+
+[2026-10-01 02:03:46:472 ERROR] [Scripting] [Watchdog] Unhandled critical exception of type 'StackOverflow' in behavior pack 'Blaze Server Systems'
+
+[2026-10-01 02:03:46:472 INFO] [Scripting] Watchdog shutting down server
+
+[2026-10-01 02:03:46:472 ERROR] [Watchdog] Unhandled critical exception of type 'StackOverflow' in behavior pack 'Blaze Server Systems'
+[2026-10-01 02:03:46:472 INFO] Server stop requested.
+[2026-10-01 02:03:46:502 INFO] Stopping server...
