@@ -1,0 +1,44 @@
+{
+  "limitGroups": [
+    {
+      "minecraftPacketIds": [ 193, 4 ],
+      "algorithm": {
+        "name": "BucketPacketLimitAlgorithm",
+        "params": {
+          "drainRatePerSec": 0.0013,
+          "maxBucketSize": 1
+        }
+      }
+    },
+    {
+      "minecraftPacketIds": [ 9, 97 ],
+      "algorithm": {
+        "name": "BucketPacketLimitAlgorithm",
+        "params": {
+          "drainRatePerSec": 10,
+          "maxBucketSize": 50
+        }
+      }
+    },
+    {
+      "minecraftPacketIds": [ 93 ],
+      "algorithm": {
+        "name": "BucketPacketLimitAlgorithm",
+        "params": {
+          "drainRatePerSec": 10,
+          "maxBucketSize": 50
+        }
+      }
+    },
+    {
+      "minecraftPacketIds": [ 154 ],
+      "algorithm": {
+        "name": "BucketPacketLimitAlgorithm",
+        "params": {
+          "drainRatePerSec": 20,
+          "maxBucketSize": 60
+        }
+      }
+    }
+  ]
+}
