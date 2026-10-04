@@ -1,0 +1,16 @@
+01:24:13[Scripting][warning]-[Blaze] OK playerSpawn
+
+01:24:13[Scripting][warning]-[Blaze] SKIP chatSend
+
+01:24:13[Scripting][warning]-[Blaze] OK itemUse
+
+01:24:13[Scripting][warning]-[Blaze] OK entityDie
+
+01:24:13[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:24:13[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:24:13[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
+01:24:20[Scripting][warning]-[Blaze] v18 offhand buttons + real light
+
