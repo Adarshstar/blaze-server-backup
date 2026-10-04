@@ -1,0 +1,18 @@
+16:19:03[Scripting][warning]-[Blaze] OK playerSpawn
+
+16:19:03[Scripting][warning]-[Blaze] SKIP missing chatSend
+
+16:19:03[Scripting][warning]-[Blaze] SKIP missing chatSend
+
+16:19:03[Scripting][warning]-[Blaze] OK itemUse
+
+16:19:03[Scripting][warning]-[Blaze] OK entityDie
+
+16:19:03[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+16:19:03[Scripting][warning]-[Blaze] SKIP missing playerPlaceBlock
+
+16:19:16[Scripting][warning]-[Blaze] inv snapshots: 1
+
+16:19:16[Scripting][warning]-[Blaze] v16 loaded (crash-safe)
+
