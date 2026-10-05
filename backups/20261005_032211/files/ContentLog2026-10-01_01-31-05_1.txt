@@ -1,0 +1,16 @@
+01:31:05[Scripting][warning]-[Blaze] OK playerSpawn
+
+01:31:05[Scripting][warning]-[Blaze] SKIP chatSend
+
+01:31:05[Scripting][warning]-[Blaze] OK itemUse
+
+01:31:05[Scripting][warning]-[Blaze] OK entityDie
+
+01:31:05[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:31:05[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:31:05[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
+01:31:12[Scripting][warning]-[Blaze] v19 control pad on-screen UI + real light
+
