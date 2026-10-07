@@ -1,0 +1,4 @@
+timestamp_utc=20261007_121304
+server_id=265069f2
+file_count=49
+size=8.1M
