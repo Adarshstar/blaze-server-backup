@@ -1,0 +1,14 @@
+01:45:46[Scripting][warning]-[Blaze] OK playerSpawn
+
+01:45:46[Scripting][warning]-[Blaze] SKIP chatSend
+
+01:45:46[Scripting][warning]-[Blaze] OK itemUse
+
+01:45:46[Scripting][warning]-[Blaze] OK entityDie
+
+01:45:46[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:45:46[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:45:46[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
