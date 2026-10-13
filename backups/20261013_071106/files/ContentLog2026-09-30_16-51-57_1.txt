@@ -1,0 +1,16 @@
+16:51:58[Scripting][warning]-[Blaze] OK playerSpawn
+
+16:51:58[Scripting][warning]-[Blaze] SKIP chatSend
+
+16:51:58[Scripting][warning]-[Blaze] OK itemUse
+
+16:51:58[Scripting][warning]-[Blaze] OK entityDie
+
+16:51:58[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+16:51:58[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+16:51:58[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
+16:52:07[Scripting][warning]-[Blaze] v17 heavy UI loaded
+

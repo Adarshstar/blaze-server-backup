@@ -1,0 +1,16 @@
+07:32:00[Scripting][warning]-[Blaze] OK playerSpawn
+
+07:32:00[Scripting][warning]-[Blaze] SKIP chatSend
+
+07:32:00[Scripting][warning]-[Blaze] SKIP chatSend
+
+07:32:00[Scripting][warning]-[Blaze] no chat event — use phone item / forms only
+
+07:32:00[Scripting][warning]-[Blaze] OK itemUse
+
+07:32:00[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+07:32:00[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
+07:32:18[Scripting][warning]-[Blaze] v21-safe ready
+
