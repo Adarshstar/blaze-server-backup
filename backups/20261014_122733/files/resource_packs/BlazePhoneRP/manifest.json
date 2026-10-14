@@ -1,0 +1,17 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Blaze Phone RP (Required)",
+    "description": "Required pack — phone icons + HUD control hints",
+    "uuid": "d4e5f6a7-b8c9-0123-def0-456789abcdef",
+    "version": [2, 6, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "e5f6a7b8-c9d0-1234-ef01-56789abcdef0",
+      "version": [2, 6, 0]
+    }
+  ]
+}
