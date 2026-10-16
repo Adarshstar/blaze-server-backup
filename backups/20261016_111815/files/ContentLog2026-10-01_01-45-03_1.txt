@@ -1,0 +1,22 @@
+01:45:03[Scripting][warning]-[Blaze] OK playerSpawn
+
+01:45:03[Scripting][warning]-[Blaze] SKIP chatSend
+
+01:45:03[Scripting][warning]-[Blaze] OK itemUse
+
+01:45:03[Scripting][warning]-[Blaze] OK entityDie
+
+01:45:03[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:45:03[Scripting][warning]-[Blaze] OK playerBreakBlock
+
+01:45:03[Scripting][warning]-[Blaze] SKIP playerPlaceBlock
+
+01:45:10[Scripting][warning]-[Blaze] init InternalError: stack overflow
+
+01:45:10[Scripting][error]-[Watchdog] Stack overflow detected in 'Blaze Server Systems'
+
+01:45:10[Scripting][error]-[Watchdog] Unhandled critical exception of type 'StackOverflow' in behavior pack 'Blaze Server Systems'
+
+01:45:10[Scripting][inform]-Watchdog shutting down server
+
