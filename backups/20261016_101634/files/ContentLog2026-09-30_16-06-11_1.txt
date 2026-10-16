@@ -1,0 +1,8 @@
+16:06:12[Scripting][error]-[Blaze Server Systems] TypeError: cannot read property 'subscribe' of undefined    at <anonymous> (main.js:526)
+
+
+16:06:12[Scripting][error]-Plugin [Blaze Server Systems - 2.1.0] - [main.js] ran with error: [TypeError: cannot read property 'subscribe' of undefined    at <anonymous> (main.js:526)
+]
+
+16:06:12[Item][warning]-blaze:phone -> components -> minecraft:icon -> texture: this member was found in the input, but is not present in the Schema
+
